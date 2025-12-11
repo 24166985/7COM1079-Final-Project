@@ -46,5 +46,6 @@ hist(data_sub$logGrowth[data_sub$`PRIMARY INDUSTRY` == "Biotechnology/pharmaceut
 hist(data_sub$logGrowth[data_sub$`PRIMARY INDUSTRY` == "Software"],
      col=rgb(0,1,0,0.5), add=TRUE)
 legend("topright", legend=c("Biotech","Software"),
-       fill=c(rgb(0,0,1,0,5),rgb(0,1,0,0.5)))
+       fill=c(rgb(0,0,1,0.5),rgb(0,1,0,0.5)))
 dev.off()
+
