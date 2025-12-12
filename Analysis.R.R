@@ -131,6 +131,26 @@ hist(df$Growth[df$Industry_clean=="Biotech_Pharma"],
      xlab="Growth (%)", breaks=20, col="lightgreen")
 par(mfrow=c(1,1))
 
+# QQ plots per group
+par(mfrow=c(1,2))
+if (sum(df$Industry_clean == "Software") > 2) {
+  qqnorm(df$Growth[df$Industry_clean=="Software"], main="QQ-plot: Software Growth")
+  qqline(df$Growth[df$Industry_clean=="Software"])
+} else {
+  plot.new(); title("QQ-plot: Software (not enough points)")
+}
+if (sum(df$Industry_clean == "Biotech_Pharma") > 2) {
+  qqnorm(df$Growth[df$Industry_clean=="Biotech_Pharma"], main="QQ-plot: Biotech/Pharma Growth")
+  qqline(df$Growth[df$Industry_clean=="Biotech_Pharma"])
+} else {
+  plot.new(); title("QQ-plot: Biotech/Pharma (not enough points)")
+}
+par(mfrow=c(1,1))
+
+# Jitter/stripchart for individual observations
+stripchart(Growth ~ Industry_clean, data=df, vertical = TRUE, method = "jitter",
+           pch = 19, col = c("blue","darkgreen"), main="Individual Growth Observations by Industry",
+           xlab="Industry", ylab="Growth (%)")
 
 
 
