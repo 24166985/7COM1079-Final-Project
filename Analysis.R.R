@@ -152,6 +152,38 @@ stripchart(Growth ~ Industry_clean, data=df, vertical = TRUE, method = "jitter",
            pch = 19, col = c("blue","darkgreen"), main="Individual Growth Observations by Industry",
            xlab="Industry", ylab="Growth (%)")
 
+# ----------------------------
+# 9. Assumption checks (numerical)
+# ----------------------------
+
+growth_software <- df$Growth[df$Industry_clean == "Software"]
+growth_biotech <- df$Growth[df$Industry_clean == "Biotech_Pharma"]
+
+# Ensure n's exist
+n1 <- length(growth_software)
+n2 <- length(growth_biotech)
+
+# Shapiro-Wilk normality tests (only valid if n between 3 and 5000)
+shapiro_software <- if (n1 >= 3 && n1 <= 5000) shapiro.test(growth_software) else list(p.value=NA)
+shapiro_biotech <- if (n2 >= 3 && n2 <= 5000) shapiro.test(growth_biotech) else list(p.value=NA)
+
+message("Shapiro-Wilk normality test p-values:")
+message("Software p = ", signif(shapiro_software$p.value,4))
+message("Biotech p = ", signif(shapiro_biotech$p.value,4))
+
+# Variance equality test 
+var_test <- tryCatch({
+  if (n1 > 1 && n2 > 1) var.test(growth_software, growth_biotech) else stop("Not enough observations for var.test")
+}, error = function(e) {
+  message("var.test() failed or not applicable: ", e$message)
+  return(NULL)
+})
+
+if (!is.null(var_test)) {
+  message("F-test p-value (variances): ", signif(var_test$p.value,4))
+} else {
+  message("Variance test not available; proceeding with caution.")
+}
 
 
 
