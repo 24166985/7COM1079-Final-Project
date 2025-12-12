@@ -29,5 +29,26 @@ names(df_raw) <- names(df_raw) %>%
 
 message("Standardized column names:")
 print(colnames(df_raw))
+# ----------------------------
+# 4. Select & rename expected columns (adapted to your file)
+# ----------------------------
+expected_cols <- c("RANK","COMPANY_NAME","PRIMARY_INDUSTRY","GROWTH","CITY","PROV_","CEO_NAME")
+missing_cols <- setdiff(expected_cols, colnames(df_raw))
+if (length(missing_cols) > 0) {
+  stop("Expected columns missing from the Excel file: ", paste(missing_cols, collapse = ", "))
+}
+
+df <- df_raw %>%
+  select(
+    Rank = RANK,
+    Company = COMPANY_NAME,
+    Industry = PRIMARY_INDUSTRY,
+    Growth_raw = GROWTH,
+    City = CITY,
+    State = PROV_,     # matches your file
+    CEO = CEO_NAME
+  )
+
+
 
 
