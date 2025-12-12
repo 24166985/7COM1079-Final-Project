@@ -231,6 +231,55 @@ if (test_name == "t_test") {
   message("Cliff's delta = ", round(cliffs_delta, 3))
 }
 
+# ----------------------------
+# 12. Reporting template 
+# ----------------------------
+cat("Sample sizes:\n")
+cat("Software n =", n1, "\n")
+cat("Biotech/Pharma n =", n2, "\n\n")
+
+print(eda_summary)
+
+cat("\nAssumption checks:\n")
+cat("Shapiro p-values: Software =", signif(shapiro_software$p.value,4),
+    ", Biotech =", signif(shapiro_biotech$p.value,4), "\n")
+if (!is.null(var_test)) {
+  cat("F-test p-value (variances):", signif(var_test$p.value,4), "\n")
+} else {
+  cat("F-test for variances not available or not applicable.\n")
+}
+
+cat("\nInferential test used:", test_name, "\n")
+print(test_output)
+
+if (test_name == "t_test") {
+  cat("\nEffect size: Cohen's d =", round(cohens_d, 3), "\n")
+  pval <- test_output$p.value
+  cat("\nSuggested interpretation:\n")
+  cat("A Welch two-sample t-test compared mean growth rates between Software (M =",
+      round(m1,2), ", SD =", round(sd(growth_software, na.rm=TRUE),2), ", n =", n1, ") and Biotech/Pharma (M =",
+      round(m2,2), ", SD =", round(sd(growth_biotech, na.rm=TRUE),2), ", n =", n2, ").\n")
+  cat("Results: t(", round(test_output$parameter,2), ") = ", round(test_output$statistic,2),
+      ", p = ", signif(pval,3), ". ", sep = "")
+  if (pval < alpha) {
+    cat("The null hypothesis was rejected (p < 0.05), indicating a statistically significant difference in mean growth rates.\n")
+  } else {
+    cat("The null hypothesis was not rejected (p >= 0.05); there is insufficient evidence of a difference.\n")
+  }
+  cat("Effect size (Cohen's d) = ", round(cohens_d,3), ".\n")
+} else {
+  # Wilcoxon
+  pval <- test_output$p.value
+  cat("\nSuggested interpretation (edit to 3rd person):\n")
+  cat("A Wilcoxon rank-sum test compared growth rates between Software (n =", n1, ") and Biotech/Pharma (n =", n2, ").\n")
+  cat("Results: W = ", round(test_output$statistic,2), ", p = ", signif(pval,3), ".\n", sep = "")
+  if (pval < alpha) {
+    cat("The null hypothesis was rejected (p < 0.05), indicating a statistically significant difference in central tendency between groups.\n")
+  } else {
+    cat("The null hypothesis was not rejected (p >= 0.05); there is insufficient evidence of a difference.\n")
+  }
+  cat("Effect size (Cliff's delta) = ", round(cliffs_delta,3), ".\n")
+}
 
 
 
