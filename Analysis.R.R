@@ -86,6 +86,31 @@ df$Industry_clean <- factor(df$Industry_clean, levels = c("Software", "Biotech_P
 
 message("Counts by industry (filtered):")
 print(table(df$Industry_clean))
+# ----------------------------
+# 7. Descriptive statistics (EDA table)
+# ----------------------------
+eda_summary <- df %>%
+  group_by(Industry_clean) %>%
+  summarise(
+    n = n(),
+    mean_growth = mean(Growth, na.rm = TRUE),
+    median_growth = median(Growth, na.rm = TRUE),
+    sd_growth = sd(Growth, na.rm = TRUE),
+    iqr_growth = IQR(Growth, na.rm = TRUE),
+    min_growth = min(Growth, na.rm = TRUE),
+    max_growth = max(Growth, na.rm = TRUE)
+  ) %>% arrange(Industry_clean)
+
+message("Descriptive statistics by industry:")
+print(eda_summary)
+
+message("Overall summary of Growth:")
+print(summary(df$Growth))
+
+# Save the eda summary to CSV for easy copy/paste into report if needed
+write_csv(eda_summary, "eda_summary_by_industry.csv")
+
+
 
 
 
