@@ -109,6 +109,29 @@ print(summary(df$Growth))
 
 # Save the eda summary to CSV for easy copy/paste into report if needed
 write_csv(eda_summary, "eda_summary_by_industry.csv")
+# ----------------------------
+# 8. EDA Plots (Base R) - Save PNG files
+# ----------------------------
+
+# Boxplot (main plot)
+boxplot(Growth ~ Industry_clean, data = df,
+        main = "Growth Rate (%) by Industry",
+        xlab = "Industry",
+        ylab = "Growth Rate (%)",
+        col = c("lightblue", "lightgreen"),
+        notch = FALSE)   # notch turned off ??? prevents warning
+
+# Histograms per group
+par(mfrow=c(1,2))
+hist(df$Growth[df$Industry_clean=="Software"],
+     main="Software: Growth Distribution",
+     xlab="Growth (%)", breaks=20, col="lightblue")
+hist(df$Growth[df$Industry_clean=="Biotech_Pharma"],
+     main="Biotech/Pharma: Growth Distribution",
+     xlab="Growth (%)", breaks=20, col="lightgreen")
+par(mfrow=c(1,1))
+
+
 
 
 
