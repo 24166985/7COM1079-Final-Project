@@ -185,6 +185,33 @@ if (!is.null(var_test)) {
   message("Variance test not available; proceeding with caution.")
 }
 
+# ----------------------------
+# 10. Choose & run inferential test
+# ----------------------------
+alpha <- 0.05
+# Decide if parametric t-test is okay: both Shapiro p > alpha and var_test p > alpha
+vartest_ok <- !is.null(var_test) && (var_test$p.value > alpha)
+shapiro_ok <- (!is.na(shapiro_software$p.value) && shapiro_software$p.value > alpha) &&
+  (!is.na(shapiro_biotech$p.value) && shapiro_biotech$p.value > alpha)
+
+use_t_test <- shapiro_ok && vartest_ok
+
+if (use_t_test) {
+  message("Using Welch two-sample t-test (parametric).")
+  # Welch's t-test does not assume equal variances; we could use var.equal=TRUE if var_test indicated equality.
+  t_res <- t.test(Growth ~ Industry_clean, data = df, var.equal = FALSE)
+  test_name <- "t_test"
+  test_output <- t_res
+} else {
+  message("Using Wilcoxon rank-sum test (non-parametric).")
+  wilcox_res <- wilcox.test(Growth ~ Industry_clean, data = df, exact = FALSE)
+  test_name <- "wilcox"
+  test_output <- wilcox_res
+}
+
+print("Inferential test result:")
+print(test_output)
+
 
 
 
