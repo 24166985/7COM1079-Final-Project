@@ -1,3 +1,19 @@
+# --- Install tidyverse if not installed ---
+if (!require(tidyverse)) {
+  install.packages("tidyverse", dependencies = TRUE)
+  library(tidyverse)
+} else {
+  library(tidyverse)
+}
+
+# --- Install readxl if not installed ---
+if (!require(readxl)) {
+  install.packages("readxl")
+  library(readxl)
+} else {
+  library(readxl)
+}
+
 # ----------------------------
 # 0. Clean workspace 
 # ----------------------------
@@ -224,11 +240,19 @@ if (test_name == "t_test") {
   message("Cohen's d = ", round(cohens_d, 3))
 } else {
   # Wilcoxon: get W (sum of ranks). Ensure factor order: Software first, Biotech second
-  W_stat <- as.numeric(test_output$statistic)
-  # U for group1 (Software)
-  U1 <- W_stat - n1 * (n1 + 1) / 2
-  cliffs_delta <- (2 * U1) / (n1 * n2) - 1
-  message("Cliff's delta = ", round(cliffs_delta, 3))
+  x <- df$Growth[df$Industry_clean == "Software"]
+  y <- df$Growth[df$Industry_clean == "Biotech_Pharma"]
+  
+  n1 <- length(x)
+  n2 <- length(y)
+  
+  cmp <- outer(x, y, FUN = function(a, b) sign(a - b))
+  n_pos <- sum(cmp > 0)
+  n_neg <- sum(cmp < 0)
+  
+  cliffs_delta <- (n_pos - n_neg) / (n1 * n2)
+  
+  message("Cliff's delta = ", round(cliffs_delta, 4))
 }
 
 # ----------------------------
@@ -280,7 +304,6 @@ if (test_name == "t_test") {
   }
   cat("Effect size (Cliff's delta) = ", round(cliffs_delta,3), ".\n")
 }
-
 
 
 
