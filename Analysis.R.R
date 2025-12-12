@@ -212,6 +212,27 @@ if (use_t_test) {
 print("Inferential test result:")
 print(test_output)
 
+# ----------------------------
+# 11. Effect sizes
+# ----------------------------
+if (test_name == "t_test") {
+  # compute Cohen's d (using pooled SD as approximation)
+  m1 <- mean(growth_software, na.rm = TRUE)
+  m2 <- mean(growth_biotech, na.rm = TRUE)
+  pooled_sd <- sqrt(((n1-1)*sd(growth_software, na.rm=TRUE)^2 + (n2-1)*sd(growth_biotech, na.rm=TRUE)^2) / (n1 + n2 - 2))
+  cohens_d <- (m1 - m2) / pooled_sd
+  message("Cohen's d = ", round(cohens_d, 3))
+} else {
+  # Wilcoxon: get W (sum of ranks). Ensure factor order: Software first, Biotech second
+  W_stat <- as.numeric(test_output$statistic)
+  # U for group1 (Software)
+  U1 <- W_stat - n1 * (n1 + 1) / 2
+  cliffs_delta <- (2 * U1) / (n1 * n2) - 1
+  message("Cliff's delta = ", round(cliffs_delta, 3))
+}
+
+
+
 
 
 
